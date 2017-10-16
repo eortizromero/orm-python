@@ -18,7 +18,6 @@ class OrmMetaModel(api.Meta):
 
 	def _get_addon_name(self, fullname):
 		module_p = fullname.split('.')
-		print module_p
 		if len(module_p) > 2 and module_p[:2] == \
 			['orm', 'plugins']:
 			addon_name = fullname.split('.')[2]
@@ -60,55 +59,4 @@ class usuario(Model):
 	_name = 'usuario.model'
 	_description = 'description model'
 
-from collections import Mapping
 
-class Reg(Mapping):
-	def load(self, cr, mod):
-		model_names = []
-		for cls in OrmMetaModel\
-			.mod_2_models.get(mod.name,[]):
-			model = cls._buildmodel(self, cr)
-			model_names.append(model._name)
-	
-	@classmethod
-	def new(cls, db_name):
-		registry = object.__new__(cls)
-		registry.init(db_name)
-		return registry
-
-	def __len__(self):
-		return len(self.models)
-
-	def __getitem__(self, model_name):
-		return self.models[model_name]
-
-	def __iter__(self):
-		return iter(self.models)
-
-	def __call__(self, model_name):
-		return self.models[model_name]
-
-	def __setitem__(self, model_name, model):
-		self.models[model_name] = model
-
-	def init(self, db_name):
-		self.models = {}
-		self.db_name = db_name
-
-cr = connect_db()
-
-r = Reg()
-r.new('ormdatabase')
-r.load(cr, ['sale',])
-
-
-# def load_mod_graph(cr, graph, status=None, per_checks\
-# 	=True, skip_mod=None, report=None):
-# 	r = Reg()
-# 	for index, pack in enumerate(graph, 1):	
-# 		model_names = r.load(cr, pack)
-# 		print model_names
-
-# def load_mod(db, force_demo=False, status=None, \
-# 	update_modules=False):
-	
